@@ -4,6 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentTypeString;
 import com.mojang.brigadier.builder.ArgumentBuilderLiteral;
 import com.mojang.brigadier.builder.ArgumentBuilderRequired;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.core.net.command.CommandManager;
 import net.minecraft.core.net.command.CommandSource;
 
@@ -13,30 +15,27 @@ import static rosesmp.roseranks.RoseRanks.groups;
 public class RoseRanksCommand implements CommandManager.CommandRegistry {
 
 	@Override public void register(CommandDispatcher<CommandSource> commandDispatcher) {
-		String[] literals = {"roseranks", "rr"};
-		for (String literal : literals) {
-			commandDispatcher.register((ArgumentBuilderLiteral) ArgumentBuilderLiteral
-				.literal(literal)
-				.requires(source -> ((CommandSource) source).hasAdmin())
-				.then(ArgumentBuilderRequired
-					.argument("subcommand", ArgumentTypeString.word())
-					.executes(context -> {
-						String subcommand = context.getArgument("subcommand", String.class);
-						CommandSource sender = (CommandSource) context.getSource();
+		commandDispatcher.register((ArgumentBuilderLiteral) ArgumentBuilderLiteral
+			.literal("roseranks")
+			.requires(source -> ((CommandSource) source).hasAdmin())
+			.then(ArgumentBuilderRequired
+				.argument("subcommand", ArgumentTypeString.word()))
+				.executes(this::command));
 
-						switch (subcommand) {
-							case "groups", "gr" -> groupsCommand(sender);
-							default -> sender.sendMessage("Invalid subcommand!");
-						}
-						return 1;
-					})));
-		}
 	}
 
-	/**
-	 * Prints a list of the server's exisitng groups.
-	 * @param sender Can be console or a player.
-	 */
+	private int command(CommandContext<Object> context) throws CommandSyntaxException {
+		CommandSource source = (CommandSource) context.getSource();
+		String subcommand = context.getArgument("subcommand", String.class);
+
+		switch (subcommand) {
+			case "groups" -> groupsCommand((CommandSource) context.getSource());
+		}
+
+		return 1;
+	}
+
+	/**Prints a list of the server's exisitng groups.*/
 	private void groupsCommand(CommandSource sender) {
 		sender.sendMessage("Server's groups:");
 

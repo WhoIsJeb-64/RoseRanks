@@ -18,7 +18,6 @@ public class User {
 	private YamlConfiguration yaml;
 	private File file;
 	private UUID uuid;
-
 	private String group;
 
 	public User() {}
@@ -66,30 +65,6 @@ public class User {
 		data.put("group", group);
 
 		yaml.save(data);
-	}
-
-	/**
-	 * Grants a permission to a user.
-	 * @return Grant success.
-	 */
-	public boolean grant() {
-		return false;
-	}
-
-	/**
-	 * Revokes a permission from a user.
-	 * @return Revocation success.
-	 */
-	public boolean revoke() {
-		return false;
-	}
-
-	/**
-	 * Checks whether a user has a given permission.
-	 * @return Whether the user has the permission.
-	 */
-	public boolean hasPermission(String permission) throws IOException {
-		return resolveGroup().hasPermission(permission);
 	}
 
 	/*

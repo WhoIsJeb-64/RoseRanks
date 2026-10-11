@@ -21,7 +21,6 @@ public class RoseRanks implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private static Config config;
-
 	public static APIService apiService;
 	private static HashMap<String, User> loadedUsers;
 	private static HashMap<String, Group> groups;
@@ -33,8 +32,8 @@ public class RoseRanks implements ModInitializer {
 		loadedUsers = new HashMap<>();
 
 		try {
-			initGroups();
 			config.load();
+			initGroups();
 			LOGGER.info("RoseRanks initialized. Default group: {}", config.getDefaultGroup());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
