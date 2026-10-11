@@ -27,19 +27,20 @@ public class User {
 	 * Loads a user's data from file.
 	 */
 	public void load(UUID uuid) throws IOException {
-		this.uuid = uuid;
+		boolean isNew = false;
 
-		//Load yml
+		this.uuid = uuid;
 		file = new File(FabricLoader.getInstance().getConfigDir() + "/" + MOD_ID + "/users/" + uuid + ".yml");
 		if (!file.exists()) {
 			intialize();
+			isNew = true;
 		}
 		yaml = new YamlConfiguration(file);
 		yaml.load(this.getClass());
 
 
 		//Populate fields of this object with the yml's data
-		setGroup(yaml.getString("group"));
+		setGroup(isNew ? config().getDefaultGroup() : yaml.getString("group"));
 	}
 
 	/**

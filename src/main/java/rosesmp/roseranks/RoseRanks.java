@@ -4,8 +4,10 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.net.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rosesmp.roseranks.commands.RoseRanksCommand;
 import rosesmp.roseranks.data.*;
 import rosesmp.roseranks.services.APIService;
 import turniplabs.halplibe.HalpLibe;
@@ -31,15 +33,17 @@ public class RoseRanks implements ModInitializer {
 		loadedUsers = new HashMap<>();
 
 		try {
-			initializeGroups();
+			initGroups();
 			config.load();
 			LOGGER.info("RoseRanks initialized. Default group: {}", config.getDefaultGroup());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
+		initCommands();
 	}
 
-	private void initializeGroups() throws IOException {
+	private void initGroups() throws IOException {
 		groups = new HashMap<>();
 		File[] directory =
 			new File(FabricLoader.getInstance().getConfigDir() + "/" + MOD_ID + "/groups").listFiles();
@@ -53,6 +57,10 @@ public class RoseRanks implements ModInitializer {
 			Group group = new Group();
 			group.load(name);
 		}
+	}
+
+	private void initCommands() {
+		CommandManager.registerServerCommand(new RoseRanksCommand());
 	}
 
 	public static Config config() {
