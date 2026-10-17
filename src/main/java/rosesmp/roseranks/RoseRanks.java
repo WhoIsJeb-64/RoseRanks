@@ -1,13 +1,15 @@
 package rosesmp.roseranks;
 
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.net.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rosesmp.roseranks.commands.RoseRanksCommand;
+import rosesmp.roseranks.commands.RankList;
+import rosesmp.roseranks.commands.RankPrefix;
+import rosesmp.roseranks.commands.RankSetPrefix;
 import rosesmp.roseranks.data.*;
 import rosesmp.roseranks.services.APIService;
 import turniplabs.halplibe.HalpLibe;
@@ -15,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class RoseRanks implements ModInitializer {
+public class RoseRanks implements DedicatedServerModInitializer {
 	@Environment(EnvType.SERVER)
 	public static final String MOD_ID = HalpLibe.registerMod("roseranks", true);
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -26,7 +28,7 @@ public class RoseRanks implements ModInitializer {
 	private static HashMap<String, Group> groups;
 
 	@Override
-	public void onInitialize() {
+	public void onInitializeServer() {
 		apiService = new APIService();
 		config = new Config();
 		loadedUsers = new HashMap<>();
@@ -59,7 +61,9 @@ public class RoseRanks implements ModInitializer {
 	}
 
 	private void initCommands() {
-		CommandManager.registerServerCommand(new RoseRanksCommand());
+		CommandManager.registerServerCommand(new RankList());
+		CommandManager.registerServerCommand(new RankPrefix());
+		CommandManager.registerServerCommand(new RankSetPrefix());
 	}
 
 	public static Config config() {

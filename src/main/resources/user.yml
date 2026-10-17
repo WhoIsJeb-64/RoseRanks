@@ -1,1 +1,3 @@
-group: default
+selected-group: default
+unlocked-groups:
+  - default

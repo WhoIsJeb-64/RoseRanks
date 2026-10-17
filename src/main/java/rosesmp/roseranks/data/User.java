@@ -18,7 +18,8 @@ public class User {
 	private YamlConfiguration yaml;
 	private File file;
 	private UUID uuid;
-	private String group;
+	private String selectedGroup;
+	private List<String> unlockedGroups;
 
 	public User() {}
 
@@ -39,7 +40,8 @@ public class User {
 
 
 		//Populate fields of this object with the yml's data
-		setGroup(isNew ? config().getDefaultGroup() : yaml.getString("group"));
+		setSelectedGroup(isNew ? config().getDefaultGroup() : yaml.getString("selectedGroup"));
+		setUnlockedGroups(yaml.getList("unlockedGroups"));
 	}
 
 	/**
@@ -62,7 +64,8 @@ public class User {
 	 */
 	public void save() throws IOException {
 		Map<String, Object> data = new LinkedHashMap<>();
-		data.put("group", group);
+		data.put("selectedGroup", selectedGroup);
+		data.put("unlockedGroups", unlockedGroups);
 
 		yaml.save(data);
 	}
@@ -95,21 +98,29 @@ public class User {
 		this.uuid = uuid;
 	}
 
-	public String getGroup() {
-		return group;
+	public String getSelectedGroup() {
+		return selectedGroup;
 	}
 
-	public void setGroup(String group) throws IOException {
+	public void setSelectedGroup(String selectedGroup) throws IOException {
 		//Fallback is needed for when the default group did not exist at user creation
-		this.group = (!group.isEmpty()) ? group : config().getDefaultGroup();
+		this.selectedGroup = (!selectedGroup.isEmpty()) ? selectedGroup : config().getDefaultGroup();
+	}
+
+	public List<String> getUnlockedGroups() {
+		return unlockedGroups;
+	}
+
+	public void setUnlockedGroups(List<String> unlockedGroups) {
+		this.unlockedGroups = unlockedGroups;
 	}
 
 	private Group resolveGroup() throws IOException {
-		if (groups().containsKey(group)) {
-			return groups().get(group);
+		if (groups().containsKey(selectedGroup)) {
+			return groups().get(selectedGroup);
 		} else {
 			Group group = new Group();
-			group.load(this.getGroup());
+			group.load(this.getSelectedGroup());
 			return group;
 		}
 	}
